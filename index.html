@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>完整版</title>
+    <style>
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        }
+
+        #canvas {
+        display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas" width="100" height="100"></canvas>
+    <script>
+
+        let canvas = document.getElementById("canvas");
+        canvas.width = document.documentElement.clientWidth;  //获取屏幕宽
+        canvas.height = document.documentElement.clientHeight;  //获取屏幕高
+        let ctx = canvas.getContext("2d");
+        ctx.fillStyle = "black";
+        ctx.strokeStyle = "none";
+
+        ctx.lineWidth = 10;   //划画线大小
+        ctx.lineCap = "round";  
+
+        let painting = false
+        let last
+
+        //画直线方法
+        function drawLine(x1,y1,x2,y2){
+            ctx.beginPath();
+            ctx.moveTo(x1,y1);
+            ctx.lineTo(x2,y2);
+            ctx.stroke();
+        }
+        
+        // onmousedown 鼠标按下时触发 
+        canvas.onmousedown = () => {
+            painting = true
+        }
+
+        //js确认手机
+        var isTouchDevice = 'ontouchstart' in document.documentElement; 
+
+
+        if(isTouchDevice){ //判断是否是手机
+            canvas.ontouchstart = (e) =>{   //ontouchstart手机手指点下去事件
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                last = [x,y]
+            }
+
+            canvas.ontouchmove = (e) =>{
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                drawLine(last[0],last[1],x,y)
+                last = [x,y]
+            }
+        }else{
+
+            canvas.onmousedown = (e) =>{
+                painting = true
+                last = [e.clientX,e.clientY]
+            }
+            canvas.onmousemove = (e) =>{  //onmousemove 鼠标移动事件
+                if(painting === true){
+                    drawLine(last[0],last[1],e.clientX,e.clientY)
+                    last = [e.clientX,e.clientY]    
+                }
+            }
+
+            canvas.onmouseup = () =>{ //onmouseup 鼠标松开事件
+                painting = false
+            }
+
+
+        }
+
+
+    </script>
+</body>
+
+</html>
